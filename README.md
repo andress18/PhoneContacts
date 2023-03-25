@@ -1,4 +1,5 @@
 # PhoneContact
+CRUD Application using .NET 7 with Blazor WebAssembly
 
 ## Requisites
 [.NET 7 runtime ](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) or [visual studio 2022](https://visualstudio.microsoft.com/es/vs/) 
