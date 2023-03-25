@@ -1,0 +1,188 @@
+﻿@page "/"
+@using Microsoft.Extensions.Localization;
+@using PhoneContacts.Blazor.Pages.Components
+@using PhoneContacts.Contacts;
+@using PhoneContacts.Localization;
+@using Volo.Abp.Application.Dtos;
+@using Volo.Abp.MultiTenancy
+@inherits AbpCrudPageBase<IContactAppService, ContactDto, Guid, ContactPagedAndSortedResultRequestDto, CreateUpdateContactDto>
+
+<Card>
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <CardHeader class="col">
+            <div class="card" id="list1" style="border-radius: .75rem;">
+                <div class="card-body py-4 px-4 px-md-5">
+                    <p class="h1 text-center mt-3 mb-4 pb-3 text-dark">
+                        <i class="fas fa-portrait me-1"></i>
+                        <u>Phone Book App</u>
+                    </p>
+                    <div class="row m-2">
+                        <div class="col-6">
+                            <h2>Contacts</h2>
+                        </div>
+                        <div class="col-6 d-flex justify-content-end">
+                            <Column ColumnSize="ColumnSize.IsAuto">
+                                <Button Color="Color.Primary"
+                                        Clicked="OpenCreateModalAsync">
+                                    +Add Contact
+                                </Button>
+                            </Column>
+                        </div>
+                    </div>
+
+                    <DataGrid TItem="ContactDto"
+                              Data="Entities"
+                                        Filterable
+                              ReadData="OnDataGridReadAsync"
+                              TotalItems="TotalCount"
+                              ShowPager="false"
+                              ShowCaptions="false"
+                              PageSize="PageSize">
+                        <DataGridColumns>
+                            <DataGridColumn TItem="ContactDto"
+                                            Field="@nameof(ContactDto.Name)"
+                                            Caption="Name">
+                                <DisplayTemplate>
+                                    @{
+                                        var contact = context as ContactDto;
+                                        <Div>
+                                            <Column>
+                                                <Heading Size="HeadingSize.Is6" TextWeight="TextWeight.Bold">
+                                                    @(contact.Name)
+                                                </Heading>
+                                            </Column>
+                                            <Column>
+                                                <Row Flex="Flex.Row">
+                                                    <span>
+                                                        <Icon Name="IconName.Phone" />
+                                                        <Text>
+                                                            @(contact.Phone)
+                                                        </Text>
+                                                    </span>
+
+                                                </Row>
+                                            </Column>
+                                        </Div>
+                                    }
+                                </DisplayTemplate>
+                            </DataGridColumn>
+                            <DataGridEntityActionsColumn TItem="ContactDto" @ref="@EntityActionsColumn">
+                                <FilterTemplate></FilterTemplate>
+                                <DisplayTemplate>
+                                    <Div Flex="Flex.Row.Grow" Class="justify-content-between align-items-center">
+                                        <Button Clicked="()=> OpenEditModalAsync(context)">
+                                            <Icon Name="IconName.Edit" Class="text text-success" IconSize="IconSize.Large" />
+                                        </Button>
+                                        <Button Clicked="()=> DeleteEntityAsync(context)">
+                                            <Icon Name="IconName.Delete" Class="text text-danger" IconSize="IconSize.Large" />
+                                        </Button>
+                                    </Div>
+                                </DisplayTemplate>
+                            </DataGridEntityActionsColumn>
+                        </DataGridColumns>
+                    </DataGrid>
+                </div>
+            </div>
+        </CardHeader>
+    </div>
+</Card>
+
+
+
+<Modal @ref="@EditModal">
+    <ModalBackdrop />
+    <ModalContent IsCentered="true">
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Edit</ModalTitle>
+                <CloseButton Clicked="CloseEditModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@EditValidationsRef" Model="@NewEntity" ValidateOnLoad="false">
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Name</FieldLabel>
+                            <TextEdit @bind-Text="@EditingEntity.Name">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Phone</FieldLabel>
+                            <TextEdit @bind-Text="@EditingEntity.Phone">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseEditModalAsync">
+                    Cancel
+                </Button>
+                <Button Color="Color.Primary"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit="true"
+                        Clicked="UpdateEntityAsync">
+                    Save
+                </Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="@CreateModal">
+    <ModalBackdrop />
+    <ModalContent IsCentered="true">
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Create</ModalTitle>
+                <CloseButton Clicked="CloseCreateModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@CreateValidationsRef" Model="@NewEntity" ValidateOnLoad="false">
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Name</FieldLabel>
+                            <TextEdit @bind-Text="@NewEntity.Name">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Phone</FieldLabel>
+                            <TextEdit @bind-Text="@NewEntity.Phone">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseCreateModalAsync">
+                    Cancel
+                </Button>
+                <Button Color="Color.Primary"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit="true"
+                        Clicked="CreateEntityAsync">
+                    Save
+                </Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>

@@ -1,0 +1,16 @@
+﻿
+<div class="row">
+    <div class="px-3 py-1 d-flex align-items-center flex-grow-1 border-0 bg-transparent">
+        <p class="lead fw-normal mb-0">@(Title)</p>
+    </div>
+    <li class="ps-3 pe-0 py-1 rounded-0 border-0 bg-transparent">
+        <div class="d-flex flex-row justify-content-end mb-1">
+            <a href="#!" class="text-danger" data-mdb-toggle="tooltip" title="Delete todo">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+        </div>
+    </li>
+</div>
+@code {
+    [Parameter] public string Title { get; set; } = "";
+}
